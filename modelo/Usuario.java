@@ -1,10 +1,11 @@
-package Usuarios;
+package modelo;
 import exceptions.*;
+import service.Validacao;
 public abstract class Usuario {
     protected String nome;
     protected String email;
     protected String senha;
-    public Usuario(String nome, String email, String senha) throws EmailInvalidoException, SenhaInvalidaException, NomeInvalidoException {
+    public Usuario(String email, String nome, String senha) throws EmailInvalidoException, SenhaInvalidaException, NomeInvalidoException {
         setEmail(email);
         setNome(nome);
         setSenha(senha);

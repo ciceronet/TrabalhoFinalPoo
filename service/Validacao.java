@@ -1,8 +1,8 @@
-package Usuarios;
+package service;
 
 import java.util.Set;
 import exceptions.*;
-public class Validacao {
+public class Validacao{
     private static final Set<String> DOMINIOS_ACEITOS = Set.of ("gmail.com", "outlook.com", "hotmail.com", "icloud.com", "yahoo.com");
     private Validacao() {}
     public static void validarEmail(String email) throws EmailInvalidoException {
