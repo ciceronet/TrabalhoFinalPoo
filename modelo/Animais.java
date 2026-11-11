@@ -3,6 +3,7 @@ import exceptions.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import service.Validacao;
 
 
 
@@ -15,13 +16,12 @@ public class Animais {
     private String porte;
     private LocalDate dataResgate;
     private String status;
-    private int posicao;
-    public Animais(String nome, String especie, String raca, int idade,Porte porte,int posicao, LocalDate dataResgate, String status) throws NomeInvalidoException , IllegalArgumentException {
+    public Animais(String nome, String especie, String raca, int idade, String porte, LocalDate dataResgate, String status) throws NomeInvalidoException , IllegalArgumentException {
         this.nome = nome;
         this.especie = especie;
         this.raca = raca;
         this.idade = idade;
-        this.posicao = posicao;
+        this.porte = porte;
         this.dataResgate = dataResgate;
         this.status = status;
 
@@ -44,9 +44,6 @@ public class Animais {
      public int getIdade(){
         return this.idade;
     }
-     public int getPosicao(){
-        return this.posicao;
-    }
      public LocalDate getDataResgate(){
         return this.dataResgate;
     }
@@ -58,7 +55,7 @@ public class Animais {
         this.especie=especie;
     }
     public void setRaca(String raca) {
-        this.raca=raca;
+        this.raca = raca;
     }
     public void setIdade(int idade) throws IdadeInvalidaException {
         Validacao.validarIdade(idade);
