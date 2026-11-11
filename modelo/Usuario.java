@@ -2,15 +2,13 @@ package modelo;
 
 import java.util.ArrayList;
 
-import exceptions.EmailInvalidoException;
-import exceptions.NomeInvalidoException;
-import exceptions.SenhaInvalidaException;
+import exceptions.*;
 
 public abstract class Usuario {
     protected String nome;
     protected String email;
     protected String senha;
-    public Usuario(String email, String nome, String senha) throws EmailInvalidoException, SenhaInvalidaException, NomeInvalidoException {
+    public Usuario(String email, String nome, String senha) {
         this.email = email;
         this.nome = nome;
         this.senha = senha;

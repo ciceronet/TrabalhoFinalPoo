@@ -2,7 +2,7 @@ package service;
 
 import modelo.Atividade;
 import enums.TipoAtividade;
-import exceptions.AtividadeException;
+import exceptions.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import modelo.Voluntario;
@@ -30,6 +30,14 @@ public class AtividadeService {
         atividade.inscreverVoluntario(voluntario);
         voluntario.registrarParticipacao(atividade);
     }
-    
+    public List<Atividade> atividadesRealizadas() {
+        ArrayList<Atividade> realizadas = new ArrayList<>();
+        for (Atividade a : atividades) {
+            if(a.getData().isBefore(LocalDate.now())) {
+                realizadas.add(a);
+            }
+        }
+        return realizadas;
+    }    
 }
 

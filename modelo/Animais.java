@@ -20,7 +20,7 @@ public class Animais {
 
     Scanner sc = new Scanner(System.in);
 
-    public Animais(String nome, String especie, String raca, int idade,Porte porte,int posicao, LocalDate dataResgate, String status, String estadoSaude) throws NomeInvalidoException , IllegalArgumentException {
+    public Animais(String nome, String especie, String raca, int idade,String porte,int posicao, LocalDate dataResgate, String status, String estadoSaude) throws NomeInvalidoException , IllegalArgumentException {
         this.nome = nome;
         this.especie = especie;
         this.raca = raca;

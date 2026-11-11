@@ -72,6 +72,7 @@ public final class Validacao {
             throw new AtividadeException("Erro! Data está no passado!");
         }
     }
+    
 }
     
     

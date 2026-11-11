@@ -15,5 +15,8 @@ public enum TipoAtividade {
     public String getDescricao() {
         return descricao;
     }
+    public String tString() {
+        return descricao;
+    }
     
 }

@@ -1,6 +1,10 @@
 package ui;
+import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 import enums.TipoAtividade;
+import modelo.Atividade;
+import service.*;
 public final class Selecao {
 
     public static String SelecionarPorte() {
@@ -13,17 +17,20 @@ public final class Selecao {
             System.out.println("3 - Grande");
         while(rodando) {
             System.out.println("Selecione o porte do seu animal");
-            } try {
+             try {
                 resposta = scanner.nextInt();
             switch (resposta) {
                 case 1:
                     rodando = false;
+                    scanner.close();
                     return "Pequeno";
                 case 2:
                     rodando = false;
+                    scanner.close();
                     return "Médio";
                 case 3:
                     rodando = false;
+                    scanner.close();
                     return "Grande";
                 default:
                     System.out.println("Opção Inválida!!");
@@ -32,6 +39,7 @@ public final class Selecao {
                 System.out.println("Erro! Argumento Inválido");
                 scanner.next();
             }
+        }
             return null;
         }
     public static String RacaCachorro() {
@@ -55,30 +63,39 @@ public final class Selecao {
             switch (resposta) {
                 case 1:
                     rodando = false;
+                    scanner.close();
                     return "Shih Tzu";
                 case 2:
                     rodando = false;
+                    scanner.close();
                     return "Pug";
                 case 3:
                     rodando = false;
+                    scanner.close();
                     return "Poodle";
                 case 4:
                     rodando = false;
+                    scanner.close();
                     return "Golden Retriever";
                 case 5:
                     rodando = false;
+                    scanner.close();
                     return "Labrador Retriever";
                 case 6:
                     rodando = false;
+                    scanner.close();
                     return "Border Collie";
                 case 7:
                     rodando = false;
+                    scanner.close();
                     return "Pastor Alemão";
                 case 8:
                     rodando = false;
+                    scanner.close();
                     return "Husky Siberiano";
                 case 9:
                     rodando = false;
+                    scanner.close();
                     return "Rottweiler";
                 default:
                     System.out.println("Opção Inválida!!");
@@ -111,22 +128,40 @@ public final class Selecao {
             resposta = scanner.nextInt();
             switch (resposta) {
                 case 1:
+                    scanner.close();
+                    rodando = false;
                     return "Maine Coon";
                 case 2:
+                    scanner.close();
+                    rodando = false;
                     return "Persa";
                 case 3:
+                    scanner.close();
+                    rodando = false;
                     return "Ragdoll";
                 case 4:
+                    scanner.close();
+                    rodando = false;
                     return "Siamês";
                 case 5:
+                    scanner.close();
+                    rodando = false;
                     return "Angorá Turco";
                 case 6:
+                    scanner.close();
+                    rodando = false;
                     return "American Shorthair";
                 case 7:
+                    scanner.close();
+                    rodando = false;
                     return "Sphynx";
                 case 8:
+                    scanner.close();
+                    rodando = false;
                     return "Bengal";
                 case 9:
+                    scanner.close();
+                    rodando = false;
                     return "Scottish Fold";
                 default:
                     System.out.println("Opção Inválida!!");
@@ -153,9 +188,11 @@ public final class Selecao {
             switch (resposta) {
                 case 1:
                     rodando = false;
+                    scanner.close();
                     return "Saudável";
                 case 2:
                     rodando = false;
+                    scanner.close();
                     return "Doente";
                 default:
                     System.out.println("Opção Inválida!!");
@@ -166,6 +203,7 @@ public final class Selecao {
             scanner.next();
         }
         }
+        scanner.close();
         return null;
     }
     public static TipoAtividade selecionarAtividade() {
@@ -184,15 +222,19 @@ public final class Selecao {
             switch (resposta) {
                 case 1:
                     rodando = false;
+                    scanner.close();
                     return TipoAtividade.MUTIRAO_LIMPEZA;
                 case 2:
                     rodando = false;
+                    scanner.close();
                     return TipoAtividade.CAMPANHA_VACINACAO;
                 case 3:
                     rodando = false;
+                    scanner.close();
                     return TipoAtividade.FEIRA_ADOCAO;
                 case 4:
                     rodando = false;
+                    scanner.close();
                     return TipoAtividade.EVENTO_BENEFICENTE;
                 default:
                     System.out.println("Opção Inválida!!");
@@ -203,7 +245,46 @@ public final class Selecao {
             scanner.next();
         }
         }
+        scanner.close();
         return null;
+    }
+    public static CandidatarAtividade() {
+        System.out.println("Atividades disponíveis:");
+        atividadesAbertas();
+    }
+    public static int selecionarClasse(List<Usuario> usuarios) {
+        Scanner scanner = new Scanner(System.in);
+        boolean rodando = true;
+        int resposta;
+        
+        while (rodando) {
+            System.out.println("        Usuários        ");
+            System.out.println("1 - Voluntario");
+            System.out.println("2 - Veterinário");
+            System.out.println("Selecione a opção desejada:");
+            
+            try {
+                resposta = scanner.nextInt();
+                switch (resposta) {
+                    case 1:
+                        cadastroVoluntario(usuarios);
+                        rodando = false;
+                        return 1;
+                    case 2:
+                        cadastroVeterinario(usuarios); 
+                        rodando = false;
+                        return 2;
+                    default:
+                        System.out.println("Opção Inválida!!");
+                        break;
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Erro! Entrada inválida.");
+                scanner.next(); 
+            }
+        }
+        scanner.close();
+        return 0;
     }
 }
 
