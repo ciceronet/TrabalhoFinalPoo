@@ -32,6 +32,7 @@ public class TelaPrincipal {
          while (rodando) {
                 System.out.println("Digite a data do evento dd/mm/aa");
                 String entrada = scanner.nextLine().trim();
+                rodando = false;
                 try {
                     return LocalDate.parse(entrada, formatador);
                 } catch(DateTimeParseException e) {
