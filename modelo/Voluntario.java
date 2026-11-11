@@ -23,4 +23,7 @@ public class Voluntario extends Usuario{
             }
         }
     }
+    public void registrarParticipacao(Atividade atividade) {
+        throw new UnsupportedOperationException("Unimplemented method 'registrarParticipacao'");
+    }
 }

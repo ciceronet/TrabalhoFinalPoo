@@ -1,5 +1,5 @@
 package modelo;
 
-public class Solicitacao {
+public class SolicitacaoAdocao {
     
 }

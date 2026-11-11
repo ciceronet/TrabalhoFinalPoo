@@ -1,5 +1,7 @@
 package modelo;
 
+import java.util.ArrayList;
+
 import exceptions.EmailInvalidoException;
 import exceptions.NomeInvalidoException;
 import exceptions.SenhaInvalidaException;
@@ -13,7 +15,7 @@ public abstract class Usuario {
         this.nome = nome;
         this.senha = senha;
     }
-    public abstract void Menu();
+    public abstract void Menu(ArrayList<Animais> cadastrados,ArrayList<Animais> adotados,ArrayList<Animais> tratando,ArrayList<Voluntario> voluntarios, ArrayList<Veterinario> veterinarios,ArrayList<Atividade> eventos);
     public String getEmail() {
         return this.email;
     }
@@ -23,4 +25,6 @@ public abstract class Usuario {
     public String getSenha() {
         return this.senha;
     }
+
+    public abstract String getTipoUsuario();
 }
