@@ -1,68 +1,43 @@
 package modelo;
 import java.time.LocalDate;
 import exceptions.AtividadeException;
-import service.Validacao;
-import java.util.ArrayList;
-import java.util.List;
-import enums.*;
-
 
 public class Atividade {
+    private String nome;
     private int vagas;
     private LocalDate data;
-    private TipoAtividade tipo;
-    public Atividade (int vagas, LocalDate data, TipoAtividade tipo) throws AtividadeException {
+    private String tipo;
+    public Atividade (String nome, int vagas, LocalDate data, String tipo) throws AtividadeException {
+        Validacao.validarTarefa(nome);
         Validacao.validarVagas(vagas);
-        Validacao.validarDataAtividade(data);
+        Validacao.validarData(data);
         setTipo(tipo);
-        this.vagas = vagas;
-        this.data = data;
-        this.tipo = tipo;
     }
-    private List<Voluntario> voluntarios = new ArrayList<>();
+     public String getNome(){
+        return this.nome;
+    }
     public int getVagas(){
         return this.vagas;
     }
-     public TipoAtividade getTipo(){
+     public String getTipo(){
         return this.tipo;
     }
     public LocalDate getData(){
         return this.data;
+    }
+    public void setNome(String nome) throws AtividadeException{
+        Validacao.validarTarefa(nome);
+        this.nome = nome;
     }
     public void setVagas(int vagas) throws AtividadeException{
         Validacao.validarVagas(vagas);
         this.vagas = vagas;
     }
     public void setData(LocalDate data) throws AtividadeException{
-        Validacao.validarDataAtividade(data);
+        Validacao.validarData(data);
         this.data = data;
     }
-    public void setTipo (TipoAtividade tipo) {
-        this.tipo = tipo;
+    public void setTipo (String tipo) {
+
     }
-    public int getVagasRestantes() {
-        return vagas - voluntarios.size();
-    }
-    public List<Voluntario> getVoluntarios() {
-        return new ArrayList<>(voluntarios);
-    }
-    public void inscreverVoluntario(Voluntario voluntario) throws AtividadeException {
-        if(voluntario == null) {
-            throw new AtividadeException("Erro! Voluntário inválido!");
-        }
-        if(data.isBefore(LocalDate.now())) {
-            throw new AtividadeException("Erro! Não é possível se inscrever em uma atividade que já ocorreu!");
-        }
-        int vagasPreenchidas = 0;
-        for(Voluntario v : voluntarios) {
-            if(v.getEmail().equalsIgnoreCase(voluntario.getEmail())) {
-                throw new AtividadeException("Erro! Não é possível se inscrever duas vezes na mesma atividade!");
-            }
-            vagasPreenchidas++;
-        }
-        if (vagasPreenchidas >= vagas) {
-            throw new AtividadeException("Erro! Não há vagas disponíveis para esta atividade!");
-        }
-        voluntarios.add(voluntario);
-    } 
 }

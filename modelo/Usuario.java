@@ -1,8 +1,5 @@
 package modelo;
 
-import java.util.ArrayList;
-
-import exceptions.AtividadeException;
 import exceptions.EmailInvalidoException;
 import exceptions.NomeInvalidoException;
 import exceptions.SenhaInvalidaException;
