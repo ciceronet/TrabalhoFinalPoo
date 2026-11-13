@@ -12,23 +12,23 @@ public class Animais {
     private String especie;
     private String raca;
     private int idade;
-    private String porte;
     private LocalDate dataResgate;
     private String status;
     private String estadoSaude;
-    private static int id;
-
+    private final int id;
+     private static int contadorId = 0;
     Scanner sc = new Scanner(System.in);
 
-    public Animais(String nome, String especie, String raca, int idade,String porte,int posicao, LocalDate dataResgate, String status, String estadoSaude) throws NomeInvalidoException , IllegalArgumentException {
+    public Animais(int id,String nome, String especie, String raca, int idade,LocalDate dataResgate, String status, String estadoSaude) throws NomeInvalidoException , IllegalArgumentException {
+        contadorId++;
+        this.id = contadorId;
         this.nome = nome;
         this.especie = especie;
         this.raca = raca;
         this.idade = idade;
         this.dataResgate = dataResgate;
-        this.status = status;
+        this.status = "Disponível";
         this.estadoSaude= estadoSaude;
-        id++;
     }
     private int resposta;
     private boolean rodando=true;
@@ -44,9 +44,6 @@ public class Animais {
     }
      public String getStatus(){
         return this.status;
-    }
-     public String getPorte(){
-        return this.porte;
     }
      public int getIdade(){
         return this.idade;
@@ -77,20 +74,205 @@ public class Animais {
         Validacao.validarIdade(idade);
         this.idade = idade;
     }
-    public void setPorte(String porte) {
-        this.porte=porte;
-    }
-    public void setDataDeNascimento (LocalDate dataResgate) {
+    public void setDataResgate(LocalDate dataResgate) {
         this.dataResgate=dataResgate;
     }
-    public void setStatus(String status) {
+    public void setStatus(String status){
         this.status=status;
     }
-    public void cadastrarAnimal(ArrayList<Animais> cadastrados,Animais animal){
-        cadastrados.add(animal);
+    public static void cadastrarAnimal(ArrayList<Animais> animais, Scanner sc) {
+
+    System.out.println("\n===== CADASTRAR ANIMAL =====");
+
+    System.out.print("Digite o ID: ");
+    int id = sc.nextInt();
+    sc.nextLine();
+
+    System.out.print("Digite o nome: ");
+    String nome = sc.nextLine();
+
+    System.out.print("Digite a espécie: ");
+    String especie = sc.nextLine();
+
+    System.out.print("Digite a raça: ");
+    String raca = sc.nextLine();
+
+    System.out.print("Digite a idade: ");
+    int idade = sc.nextInt();
+    sc.nextLine();
+
+    System.out.print("Digite a data de resgate (AAAA-MM-DD): ");
+    LocalDate dataResgate = LocalDate.parse(sc.nextLine());
+
+    System.out.print("Digite o status: ");
+    String status = sc.nextLine();
+
+    System.out.print("Digite o estado de saúde: ");
+    String estadoSaude = sc.nextLine();
+
+    Animais novoAnimal=null;
+    try {
+        novoAnimal = new Animais(id,nome,especie,raca,idade, dataResgate,status,estadoSaude);
+    } catch (IllegalArgumentException e) {
+        e.printStackTrace();
+    } catch (NomeInvalidoException e) {
+        e.printStackTrace();
     }
-    public void editarRemover(ArrayList<Animais> cadastrados,Animais animal){
-        cadastrados.remove(animal);
+
+    animais.add(novoAnimal);
+
+    System.out.println("\nAnimal cadastrado com sucesso!");
+}
+    public static void gerenciarAnimal(ArrayList<Animais> animais, Scanner sc) {
+
+    Animais animalEncontrado = null;
+
+    // BUSCA DO ANIMAL
+    System.out.println("\n===== BUSCAR ANIMAL =====");
+    System.out.println("1 - Buscar por ID");
+    System.out.println("2 - Buscar por Nome");
+    System.out.print("Escolha: ");
+
+    int opcaoBusca = sc.nextInt();
+    sc.nextLine();
+
+    switch (opcaoBusca) {
+
+        case 1:
+            System.out.print("Digite o ID: ");
+            int id = sc.nextInt();
+            sc.nextLine();
+
+            for (Animais a : animais) {
+                if (a.getId() == id) {
+                    animalEncontrado = a;
+                    break;
+                }
+            }
+            break;
+
+        case 2:
+            System.out.print("Digite o nome: ");
+            String nome = sc.nextLine();
+
+            for (Animais a : animais) {
+                if (a.getNome().equalsIgnoreCase(nome)) {
+                    animalEncontrado = a;
+                    break;
+                }
+            }
+            break;
+
+        default:
+            System.out.println("Opção inválida!");
+            return;
+    }
+    if (animalEncontrado == null) {
+        System.out.println("Animal não encontrado!");
+        return;
+    }
+
+    System.out.println("\nAnimal encontrado:");
+    System.out.println(animalEncontrado);
+
+    // ESCOLHA DA OPERAÇÃO
+    System.out.println("\n===== GERENCIAR ANIMAL =====");
+    System.out.println("1 - Excluir");
+    System.out.println("2 - Editar");
+    System.out.print("Escolha: ");
+
+    int opcao = sc.nextInt();
+    sc.nextLine();
+
+    switch (opcao) {
+
+        case 1:
+            animais.remove(animalEncontrado);
+            System.out.println("Animal excluído com sucesso!");
+            break;
+
+        case 2:
+
+            int editar = -1;
+
+            while (editar != 0) {
+
+                System.out.println("\n===== EDITAR ANIMAL =====");
+                System.out.println("1 - Nome");
+                System.out.println("2 - Espécie");
+                System.out.println("3 - Raça");
+                System.out.println("4 - Idade");
+                System.out.println("5 - Data de Resgate");
+                System.out.println("6 - Status");
+                System.out.println("7 - Estado de Saúde");
+                System.out.println("0 - Finalizar edição");
+
+                System.out.print("Escolha: ");
+                editar = sc.nextInt();
+                sc.nextLine();
+
+                switch (editar) {
+
+                    case 1:
+                        System.out.print("Novo nome: ");
+                        try {
+                            animalEncontrado.setNome(sc.nextLine());
+                        } catch (NomeInvalidoException e) {
+                            e.printStackTrace();
+                        }
+                        break;
+
+                    case 2:
+                        System.out.print("Nova espécie: ");
+                        animalEncontrado.setEspecie(sc.nextLine());
+                        break;
+
+                    case 3:
+                        System.out.print("Nova raça: ");
+                        animalEncontrado.setRaca(sc.nextLine());
+                        break;
+
+                    case 4:
+                        System.out.print("Nova idade: ");
+                        try {
+                            animalEncontrado.setIdade(sc.nextInt());
+                        } catch (IdadeInvalidaException e) {
+                            e.printStackTrace();
+                        }
+                        sc.nextLine();
+                        break;
+
+                    case 5:
+                        System.out.print("Nova data de resgate (AAAA-MM-DD): ");
+                        animalEncontrado.setDataResgate(
+                            LocalDate.parse(sc.nextLine())
+                        );
+                        break;
+
+                    case 6:
+                        System.out.print("Novo status: ");
+                        animalEncontrado.setStatus(sc.nextLine());
+                        break;
+
+                    case 7:
+                        System.out.print("Novo estado de saúde: ");
+                        animalEncontrado.setEstadoSaude(sc.nextLine());
+                        break;
+
+                    case 0:
+                        System.out.println("Edição finalizada!");
+                        break;
+
+                    default:
+                        System.out.println("Opção inválida!");
+                }
+            }
+            break;
+
+        default:
+            System.out.println("Opção inválida!");
+    }
+
     }
     public void filtroAnimais(ArrayList<Animais> cadastrados){
         while(rodando) {
@@ -98,10 +280,9 @@ public class Animais {
             System.out.println("2 - Especie");
             System.out.println("3 - Raça");
             System.out.println("4 - Idade");
-            System.out.println("5 - Porte");
-            System.out.println("6 - Data de Resgate");
-            System.out.println("7 - Status");
-            System.out.println("8 - Estado de Saude");
+            System.out.println("5 - Data de Resgate");
+            System.out.println("6 - Status");
+            System.out.println("7 - Estado de Saude");
             System.out.println("0 - Sair");
             resposta = sc.nextInt(); 
             switch (resposta) {
@@ -113,7 +294,6 @@ public class Animais {
                         System.out.print("Especie:"+u.getEspecie()+" ");
                         System.out.print("Raca:"+u.getRaca()+" ");
                         System.out.print("Idade:"+u.getIdade()+" ");
-                        System.out.print("Porte:"+u.getPorte()+" ");
                         System.out.print("Data de Resgate:"+u.getDataResgate()+" ");
                         System.out.print("Status:"+u.getStatus()+" ");
                         System.out.println();
@@ -128,7 +308,6 @@ public class Animais {
                         System.out.print("Especie:"+u.getEspecie()+" ");
                         System.out.print("Raca:"+u.getRaca()+" ");
                         System.out.print("Idade:"+u.getIdade()+" ");
-                        System.out.print("Porte:"+u.getPorte()+" ");
                         System.out.print("Data de Resgate:"+u.getDataResgate()+" ");
                         System.out.print("Status:"+u.getStatus()+" ");
                         System.out.println();
@@ -143,7 +322,6 @@ public class Animais {
                         System.out.print("Especie:"+u.getEspecie()+" ");
                         System.out.print("Raca:"+u.getRaca()+" ");
                         System.out.print("Idade:"+u.getIdade()+" ");
-                        System.out.print("Porte:"+u.getPorte()+" ");
                         System.out.print("Data de Resgate:"+u.getDataResgate()+" ");
                         System.out.print("Status:"+u.getStatus()+" ");
                         System.out.println();
@@ -158,7 +336,6 @@ public class Animais {
                         System.out.print("Especie:"+u.getEspecie()+" ");
                         System.out.print("Raca:"+u.getRaca()+" ");
                         System.out.print("Idade:"+u.getIdade()+" ");
-                        System.out.print("Porte:"+u.getPorte()+" ");
                         System.out.print("Data de Resgate:"+u.getDataResgate()+" ");
                         System.out.print("Status:"+u.getStatus()+" ");
                         System.out.println();
@@ -166,21 +343,6 @@ public class Animais {
                 }
                     break;
                 case 5:
-                 String buscaD=sc.nextLine();
-               for (Animais u : cadastrados) {
-                    if (u.getPorte().equalsIgnoreCase(buscaD)){ 
-                        System.out.print("Nome:"+u.getNome()+" ");
-                        System.out.print("Especie:"+u.getEspecie()+" ");
-                        System.out.print("Raca:"+u.getRaca()+" ");
-                        System.out.print("Idade:"+u.getIdade()+" ");
-                        System.out.print("Porte:"+u.getPorte()+" ");
-                        System.out.print("Data de Resgate:"+u.getDataResgate()+" ");
-                        System.out.print("Status:"+u.getStatus()+" ");
-                        System.out.println();
-                    }
-                }
-                    break;
-                case 6:
                  LocalDate buscaE = LocalDate.parse(sc.nextLine());
                for (Animais u : cadastrados) {
                     if (u.getDataResgate()==(buscaE)) { 
@@ -188,14 +350,13 @@ public class Animais {
                         System.out.print("Especie:"+u.getEspecie()+" ");
                         System.out.print("Raca:"+u.getRaca()+" ");
                         System.out.print("Idade:"+u.getIdade()+" ");
-                        System.out.print("Porte:"+u.getPorte()+" ");
                         System.out.print("Data de Resgate:"+u.getDataResgate()+" ");
                         System.out.print("Status:"+u.getStatus()+" ");
                         System.out.println();
                     }
                 }
                     break;
-                case 7:
+                case 6:
                  String buscaF=sc.nextLine();
                for (Animais u : cadastrados) {
                     if (u.getStatus().equalsIgnoreCase(buscaF)){ 
@@ -203,14 +364,13 @@ public class Animais {
                         System.out.print("Especie:"+u.getEspecie()+" ");
                         System.out.print("Raca:"+u.getRaca()+" ");
                         System.out.print("Idade:"+u.getIdade()+" ");
-                        System.out.print("Porte:"+u.getPorte()+" ");
                         System.out.print("Data de Resgate:"+u.getDataResgate()+" ");
                         System.out.print("Status:"+u.getStatus()+" ");
                         System.out.println();
                     }
                 }
                      break;
-                case 8:
+                case 7:
                 String buscaR=sc.nextLine();
                for (Animais u : cadastrados) {
                     if (u.getEstadoSaude().equalsIgnoreCase(buscaR)){ 
@@ -218,7 +378,6 @@ public class Animais {
                         System.out.print("Especie:"+u.getEspecie()+" ");
                         System.out.print("Raca:"+u.getRaca()+" ");
                         System.out.print("Idade:"+u.getIdade()+" ");
-                        System.out.print("Porte:"+u.getPorte()+" ");
                         System.out.print("Data de Resgate:"+u.getDataResgate()+" ");
                         System.out.print("Status:"+u.getStatus()+" ");
                         System.out.println();
@@ -230,11 +389,15 @@ public class Animais {
                     System.out.println("Sistema de Busca fechado!");
                     break;
                 default:
-
+                System.out.print("Digite uma opção valida");
                     break;
             }
         }
-      
+      sc.close();
     }
+    public boolean podeSerAdotado() {
 
+        return !estadoSaude.equalsIgnoreCase("Crítico")
+                && !status.equalsIgnoreCase("Adotado");
+    }
 }

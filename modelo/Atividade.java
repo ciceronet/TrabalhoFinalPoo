@@ -1,6 +1,6 @@
 package modelo;
 import java.time.LocalDate;
-import exceptions.*;
+import exceptions.AtividadeException;
 import service.Validacao;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +14,7 @@ public class Atividade {
     public Atividade (int vagas, LocalDate data, TipoAtividade tipo) throws AtividadeException {
         Validacao.validarVagas(vagas);
         Validacao.validarDataAtividade(data);
+        setTipo(tipo);
         this.vagas = vagas;
         this.data = data;
         this.tipo = tipo;
