@@ -286,7 +286,36 @@ public final class Selecao {
         scanner.close();
         return 0;
     }
+    public static String selecionarEspecie(Scanner scan) {
+        Scanner scanner = new Scanner(System.in);
+        boolean rodando = true;
+        while(rodando) {
+        try{
+            System.out.println("\n      SELECIONE A ESPÉCIE     ");
+            System.out.println("1 - Cachorro");
+            System.out.println("2 - Gato");
+            System.out.print("Escolha: ");
+            int opcao = scan.nextInt();
+            scan.nextLine();
+            switch (opcao) {
+                case 1:
+                    scanner.close();
+                    return "Cachorro";
+                case 2:
+                    scanner.close();
+                    return "Gato";
+                default:
+                    System.out.println("Opção inválida!");
+                    break;
+            }
+        } catch(InputMismatchException e) {
+            System.out.println("Erro! Digite um número");
+            scanner.next();
+        }
+    }
+    scanner.close();
+    return null;
 }
-
+}
 
 

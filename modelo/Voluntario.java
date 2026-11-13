@@ -22,11 +22,9 @@ public class Voluntario extends Usuario{
             System.out.println("5 - Solicitar adoção");
             switch (resposta) {
                 case 1:              
-                System.out.println("\n===== ANIMAIS DISPONÍVEIS =====");
-                 for (Animais u : cadastrados) {
-
+                    System.out.println("\n      ANIMAIS DISPONÍVEIS        \n");
+                    for (Animais u : cadastrados) {
                 if (u.getStatus().equalsIgnoreCase("Disponível")) {
-
                     System.out.println("--------------------------");
                     System.out.println("ID: " + u.getId());
                     System.out.println("Nome: " + u.getNome());
@@ -35,7 +33,7 @@ public class Voluntario extends Usuario{
                     System.out.println("Idade: " + u.getIdade());
                     System.out.println("Estado de saúde: " + u.getEstadoSaude());
 
-                     }
+                }
 
                 }
                     break;
@@ -58,68 +56,49 @@ public class Voluntario extends Usuario{
                 
                     break;
                 case 5:
-                    System.out.println("\n===== SOLICITAR ADOÇÃO =====");
+                    System.out.println("\n      SOLICITAR ADOÇÃO      \n");
+                    System.out.print("Digite o ID do animal: ");
+                    int id = sc.nextInt();
+                    sc.nextLine();
+                    Animais animalEncontrado = null;
+                    for (Animais u : cadastrados) {
 
-    System.out.print("Digite o ID do animal: ");
-    int id = sc.nextInt();
-    sc.nextLine();
+                        if (u.getId() == id) {
+                            animalEncontrado = u;
+                            break;
+                        }
+                    }
+                    if (animalEncontrado == null) {
+                        System.out.println("Animal não encontrado!");
+                        return;
+                    }
+                    try {
+                        if (!animalEncontrado.getStatus().equalsIgnoreCase("Disponível")) {
+                            throw new IllegalStateException("Este animal não está disponível para adoção!");
+                        }
+                        if (animalEncontrado.getEstadoSaude().equalsIgnoreCase("Crítico")) {
+                            throw new IllegalStateException("Animal em estado crítico não pode ser adotado!");
+                        }
+                        for (SolicitacaoAdocao u : solicitacoes) {
+                            if (u.getAnimal().getId() == id && u.getStatus().equalsIgnoreCase("PENDENTE")) {
+                                   throw new IllegalStateException("Já existe uma solicitação pendente para este animal!");
 
-    Animais animalEncontrado = null;
-
-    for (Animais u : cadastrados) {
-
-        if (u.getId() == id) {
-            animalEncontrado = u;
-            break;
-        }
-
-    }
-
-    if (animalEncontrado == null) {
-        System.out.println("Animal não encontrado!");
-        return;
-    }
-
-    try {
-
-        if (!animalEncontrado.getStatus().equalsIgnoreCase("Disponível")) {
-            throw new IllegalStateException("Este animal não está disponível para adoção!");
-        }
-
-        if (animalEncontrado.getEstadoSaude().equalsIgnoreCase("Crítico")) {
-            throw new IllegalStateException("Animal em estado crítico não pode ser adotado!");
-        }
-
-        for (SolicitacaoAdocao u : solicitacoes) {
-
-            if (u.getAnimal().getId() == id &&
-                    u.getStatus().equalsIgnoreCase("PENDENTE")) {
-
-                throw new IllegalStateException("Já existe uma solicitação pendente para este animal!");
-
+                            }
+                        }
+                        SolicitacaoAdocao novaSolicitacao = new SolicitacaoAdocao(this, animalEncontrado);
+                        solicitacoes.add(novaSolicitacao);
+                        System.out.println("Solicitação realizada com sucesso!");
+                        System.out.println("ID da solicitação: " + novaSolicitacao.getId());
+                        System.out.println("Aguardando aprovação do administrador.");
+                        } catch (IllegalStateException e) {
+                            System.out.println("Erro: " + e.getMessage());
+                        }
+                        break;
+                    default:
+                        System.out.println("Opção inválida!");
+                        break;
             }
-
-        }
-
-        SolicitacaoAdocao novaSolicitacao = new SolicitacaoAdocao(this, animalEncontrado);
-
-        solicitacoes.add(novaSolicitacao);
-
-        System.out.println("Solicitação realizada com sucesso!");
-        System.out.println("ID da solicitação: " + novaSolicitacao.getId());
-        System.out.println("Aguardando aprovação do administrador.");
-
-    } catch (IllegalStateException e) {
-
-        System.out.println("Erro: " + e.getMessage());
-
-    }
-                    break;
-                default:
-                    System.out.println("Opção inválida!");
-                    break;
-            }
-        }
+         }
     }
     public void registrarParticipacao(Atividade atividade) {
         throw new UnsupportedOperationException("Unimplemented method 'registrarParticipacao'");

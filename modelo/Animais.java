@@ -1,9 +1,12 @@
 package modelo;
 import exceptions.*;
 import service.Validacao;
+import ui.Selecao;
 
+import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 
@@ -16,6 +19,7 @@ public class Animais {
     private String status;
     private String estadoSaude;
     private final int id;
+    private HistoricoMedico historicoMedico;
      private static int contadorId = 0;
     Scanner sc = new Scanner(System.in);
 
@@ -29,6 +33,7 @@ public class Animais {
         this.dataResgate = dataResgate;
         this.status = "Disponível";
         this.estadoSaude= estadoSaude;
+        this.historicoMedico = new HistoricoMedico();
     }
     private int resposta;
     private boolean rodando=true;
@@ -57,6 +62,9 @@ public class Animais {
     public int getId(){
         return id;
     }
+    public HistoricoMedico getHistoricoMedico() {
+    return historicoMedico;
+    }
     public void setEstadoSaude(String estadoSaude){
         this.estadoSaude = estadoSaude;
     }
@@ -81,8 +89,8 @@ public class Animais {
         this.status=status;
     }
     public static void cadastrarAnimal(ArrayList<Animais> animais, Scanner sc) {
-
-    System.out.println("\n===== CADASTRAR ANIMAL =====");
+        try {
+    System.out.println("\n      CADASTRAR ANIMAL     ");
 
     System.out.print("Digite o ID: ");
     int id = sc.nextInt();
@@ -90,45 +98,50 @@ public class Animais {
 
     System.out.print("Digite o nome: ");
     String nome = sc.nextLine();
+    Validacao.validarNome(nome);
 
-    System.out.print("Digite a espécie: ");
-    String especie = sc.nextLine();
-
-    System.out.print("Digite a raça: ");
-    String raca = sc.nextLine();
-
+    String especie = Selecao.selecionarEspecie();
+    String raca;
+    if(especie.equalsIgnoreCase(Cahorro)) {
+        raca = Selecao.RacaCachorro();
+    } else if (especie.equalIgnoreCase(Gato)) {
+        raca = Selecao.RacaGato();
+    }
     System.out.print("Digite a idade: ");
     int idade = sc.nextInt();
+    if (idade <= 0 || idade >= 25) {
+        throw new IllegalArgumentException("Idade Incorreta, digite entre 0 e 25");
+    }
     sc.nextLine();
-
     System.out.print("Digite a data de resgate (AAAA-MM-DD): ");
     LocalDate dataResgate = LocalDate.parse(sc.nextLine());
 
     System.out.print("Digite o status: ");
     String status = sc.nextLine();
-
-    System.out.print("Digite o estado de saúde: ");
-    String estadoSaude = sc.nextLine();
-
+    Validacao.validarNome(status);
+    String estadoSaude = Seleceo.selecionarSaude();
     Animais novoAnimal=null;
-    try {
         novoAnimal = new Animais(id,nome,especie,raca,idade, dataResgate,status,estadoSaude);
-    } catch (IllegalArgumentException e) {
-        e.printStackTrace();
+    } catch (InputMismatchException e) {
+    System.out.println("Digite a informação correta!");
+    sc.nextLine();  
     } catch (NomeInvalidoException e) {
-        e.printStackTrace();
+    System.out.println(e.getMessage());
+    } catch (DateTimeException e) {
+    System.out.println("Data inválida!");
+    } catch (IllegalArgumentException e) {
+    System.out.println(e.getMessage());
+    } catch (Exception e) {
+        System.out.prinln("Erro!");
     }
-
     animais.add(novoAnimal);
 
     System.out.println("\nAnimal cadastrado com sucesso!");
-}
+    }
     public static void gerenciarAnimal(ArrayList<Animais> animais, Scanner sc) {
 
     Animais animalEncontrado = null;
-
-    // BUSCA DO ANIMAL
-    System.out.println("\n===== BUSCAR ANIMAL =====");
+    System.out.println("\n     BUSCAR ANIMAL     ");
     System.out.println("1 - Buscar por ID");
     System.out.println("2 - Buscar por Nome");
     System.out.print("Escolha: ");
@@ -175,8 +188,7 @@ public class Animais {
     System.out.println("\nAnimal encontrado:");
     System.out.println(animalEncontrado);
 
-    // ESCOLHA DA OPERAÇÃO
-    System.out.println("\n===== GERENCIAR ANIMAL =====");
+    System.out.println("\n     GERENCIAR ANIMAL     ");
     System.out.println("1 - Excluir");
     System.out.println("2 - Editar");
     System.out.print("Escolha: ");
@@ -197,7 +209,7 @@ public class Animais {
 
             while (editar != 0) {
 
-                System.out.println("\n===== EDITAR ANIMAL =====");
+                System.out.println("\n      EDITAR ANIMAL       ");
                 System.out.println("1 - Nome");
                 System.out.println("2 - Espécie");
                 System.out.println("3 - Raça");

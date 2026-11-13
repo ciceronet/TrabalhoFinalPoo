@@ -31,7 +31,6 @@ public abstract class Usuario {
     public void Menu1(ArrayList<Animais> cadastrados, ArrayList<Animais> adotados, ArrayList<Animais> tratando,
             ArrayList<Voluntario> voluntarios, ArrayList<Veterinario> veterinarios, ArrayList<Atividade> eventos,
             ArrayList<Notificacao> notifica) {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'Menu1'");
     }
 }

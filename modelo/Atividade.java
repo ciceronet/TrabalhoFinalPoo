@@ -1,6 +1,6 @@
 package modelo;
 import java.time.LocalDate;
-import exceptions.AtividadeException;
+import exceptions.*;
 import service.Validacao;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +14,6 @@ public class Atividade {
     public Atividade (int vagas, LocalDate data, TipoAtividade tipo) throws AtividadeException {
         Validacao.validarVagas(vagas);
         Validacao.validarDataAtividade(data);
-        setTipo(tipo);
         this.vagas = vagas;
         this.data = data;
         this.tipo = tipo;
@@ -47,6 +46,7 @@ public class Atividade {
         return new ArrayList<>(voluntarios);
     }
     public void inscreverVoluntario(Voluntario voluntario) throws AtividadeException {
+        try{
         if(voluntario == null) {
             throw new AtividadeException("Erro! Voluntário inválido!");
         }
@@ -64,5 +64,8 @@ public class Atividade {
             throw new AtividadeException("Erro! Não há vagas disponíveis para esta atividade!");
         }
         voluntarios.add(voluntario);
+    } catch(AtividadeException e) {
+        system.out.println(e.getMessage());
+    }
     } 
 }
