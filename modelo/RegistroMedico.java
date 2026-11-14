@@ -1,8 +1,18 @@
 package modelo;
+
+import java.time.LocalDate;
+
 public abstract class RegistroMedico {
-    private String descricao;
+    private final String descricao;
+    private final LocalDate data;
+
     public RegistroMedico(String descricao) {
+        this(descricao, LocalDate.now());
+    }
+
+    public RegistroMedico(String descricao, LocalDate data) {
         this.descricao = descricao;
+        this.data = data;
     }
 
     public LocalDate getData() {

@@ -1,36 +1,50 @@
 package modelo;
 
-import java.util.ArrayList;
-import java.util.Scanner;
 import exceptions.EmailInvalidoException;
 import exceptions.NomeInvalidoException;
 import exceptions.SenhaInvalidaException;
+import service.Contexto;
+import service.Validacao;
 
 public abstract class Usuario {
-    protected String nome;
-    protected String email;
-    protected String senha;
-    public Usuario(String email, String nome, String senha) throws EmailInvalidoException, SenhaInvalidaException, NomeInvalidoException {
-        this.email = email;
-        this.nome = nome;
-        this.senha = senha;
-    }
-    Scanner sc=new Scanner(System.in);
-    public abstract void Menu(ArrayList<Animais> cadastrados,ArrayList<Animais> adotados,ArrayList<Animais> tratando,ArrayList<Voluntario> voluntarios, ArrayList<Veterinario> veterinarios,ArrayList<Atividade> eventos, ArrayList<Notificacao> notifica,ArrayList<SolicitacaoAdocao>solicitacoes,Scanner sc);
-    public String getEmail() {
-        return this.email;
-    }
-    public String getNome() {
-        return this.nome;
-    }
-    public String getSenha() {
-        return this.senha;
+    private String nome;
+    private String email;
+    private String senha;
+
+    public Usuario(String email, String nome, String senha)
+            throws EmailInvalidoException, NomeInvalidoException, SenhaInvalidaException {
+        setEmail(email);
+        setNome(nome);
+        setSenha(senha);
     }
 
-    public abstract String getTipoUsuario();
-    public void Menu1(ArrayList<Animais> cadastrados, ArrayList<Animais> adotados, ArrayList<Animais> tratando,
-            ArrayList<Voluntario> voluntarios, ArrayList<Veterinario> veterinarios, ArrayList<Atividade> eventos,
-            ArrayList<Notificacao> notifica) {
-        throw new UnsupportedOperationException("Unimplemented method 'Menu1'");
+    public void setEmail(String email) throws EmailInvalidoException {
+        Validacao.validarEmail(email);
+        this.email = email.trim().toLowerCase();
     }
+
+    public void setNome(String nome) throws NomeInvalidoException {
+        Validacao.validarNome(nome);
+        this.nome = nome.trim();
+    }
+
+    public void setSenha(String senha) throws SenhaInvalidaException {
+        Validacao.validarSenha(senha);
+        this.senha = senha;
+    }
+
+    public String getEmail() { 
+        return email; 
+    }
+    public String getNome() { 
+        return nome; 
+    }
+
+    public boolean autenticar(String tentativa) {
+        return senha.equals(tentativa);
+    }
+
+    public abstract void Menu(Contexto ctx);
+
+    public abstract String getTipoUsuario();
 }

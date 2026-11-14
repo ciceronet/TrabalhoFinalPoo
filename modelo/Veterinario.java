@@ -1,267 +1,171 @@
 package modelo;
-import exceptions.*;
-import java.util.Scanner;
-import service.Validacao;
-import java.util.ArrayList;
+
 import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
-import java.time.DateTimeException;
+import java.util.ArrayList;
+import exceptions.*;
+import service.Contexto;
+import service.Validacao;
+import ui.Entrada;
+import ui.Selecao;
+import ui.TelaPrincipal;
+
 public class Veterinario extends Usuario {
-    Scanner scan = new Scanner(System.in);
-    public Veterinario(String email, String nome, String senha) throws EmailInvalidoException, SenhaInvalidaException, NomeInvalidoException {
+
+    public Veterinario(String email, String nome, String senha) throws EmailInvalidoException, NomeInvalidoException, SenhaInvalidaException {
         super(email, nome, senha);
     }
-    @Override 
-    public void Menu(Animal animal, AtividadeService atividadeService, ControleSaude controleSaude, ArrayList<Animais> cadastrados) {
+
+    @Override
+    public void Menu(Contexto ctx) {
         boolean rodando = true;
-        int resposta;
         while (rodando) {
-            System.out.println("\n         MENU         \n");
-            System.out.println("1 - Registrar consultas e tratamentos");
-            System.out.println("2 - Atualizar informações médicas dos animais");
-            System.out.println("3 - Emitir relatórios de saúde dos animais");
-            System.out.println("Selecione a opção que deseja");
-            resposta = scan.nextInt();
-            switch (resposta) {
-            case 1:
-                boolean rodando1 = true;
-                while (rodando1) {
-                System.out.println("          Consultas e Registros      ");
-                System.out.println("1 - Registrar consulta");
-                System.out.println("2 - Registrar tratamento");
-                System.out.println("0 - Voltar");
-                System.out.print("Escolha uma opção: ");
-                int opcao = scan.nextInt();
-                switch (opcao) {
-                    case 1:
-                        try {
-                            if (cadastrados.isEmpty()) {
-                                System.out.println("Não existem animais cadastrados!");
-                                break;;
-                            }
-                            for (int i = 0; i < cadastrados.size(); i++) {
-                                System.out.println((i + 1) + " - " + cadastrados.get(i).getNome());
-                            }
-                            System.out.print("Escolha o animal: ");
-                            int opcao1 = scan.nextInt();
-                            scan.nextLine();
-                            if (opcao1 < 1 || opcao1 > cadastrados.size()) {
-                            System.out.println("Opção inválida!");
-                            break;
-                            }
-                            Animais animall = cadastrados.get(opcao1 - 1);
-                            System.out.println("Digite a descricao");
-                            String descricao = scan.nextLine();
-                            Validacao.validarNome(descricao);
-                            System.out.print("Digite a data da consulta (AAAA-MM-DD): ");
-                            LocalDate data = LocalDate.parse(scan.nextLine());
-                            Validacao.validarDataResgate(data);
-                            Consulta consulta = new Consulta(data, descricao);
-                            controleSaude.registrarConsulta(animall, consulta);
-                            System.out.println("Consulta registrada com sucesso!");
-                        } catch (NomeInvalidoException e) {
-                            System.out.println(e.getMessage());
-                        } catch (DateTimeParseException e) {
-                            System.out.println(e.getMessage());
-                        } catch (ConsultaDuplicadaException e) {
-                            System.out.println(e.getMessage());
-                        }
-                        break;
-                    case 2:
-                        try {
-                            if (cadastrados.isEmpty()) {
-                                System.out.println("Não existem animais cadastrados!");
-                                break;;
-                            }
-                            for (int i = 0; i < cadastrados.size(); i++) {
-                                System.out.println((i + 1) + " - " + cadastrados.get(i).getNome());
-                            }
-                            System.out.print("Escolha o animal: ");
-                            int opcao1 = scan.nextInt();
-                            scan.nextLine();
-                            if (opcao1 < 1 || opcao1 > cadastrados.size()) {
-                            System.out.println("Opção inválida!");
-                            break;
-                            }
-                            Animais animall = cadastrados.get(opcao1- 1);
-                            System.out.print("Digite o tratamento: ");
-                            String descricao = scan.nextLine();
-                            Validacao.validarNome(descricao);
-                            Tratamento tratamento = new Tratamento(descricao);
-                            controleSaude.registrarTratamento(animall, tratamento);
-                        } catch (NomeInvalidoException e) {
-                            System.out.println(e.getMessage());
-                        } catch (DateTimeParseException e) {
-                            System.out.println(e.getMessage());
-                        } catch (TratamentoDuplicadaException e) {
-                            System.out.println(e.getMessage());
-                        }
-                        break;
-                    case 0:
-                        rodando1 = false;
-                        break;
-                    default:
-                        System.out.println("Opção inválida!");
-                        break;
-                }
+            System.out.println("\n      MENU DO VETERINÁRIO      ");
+            System.out.println("1 - Registrar consulta");
+            System.out.println("2 - Registrar tratamento");
+            System.out.println("3 - Atualizar estado de saúde");
+            System.out.println("4 - Gerenciar vacinas");
+            System.out.println("5 - Gerenciar medicamentos");
+            System.out.println("6 - Emitir relatório de saúde");
+            System.out.println("0 - Sair");
+            System.out.print("Selecione a opção que deseja: ");
+            int opcao = Entrada.lerInt();
+            if (opcao == 0) {
+                rodando = false;
+                continue;
             }
-            break;
-            case 2:
-                if (cadastrados.isEmpty()) {
-                    System.out.println("Não existem animais cadastrados!");
-                    break;
+            if (opcao < 1 || opcao > 6) {
+                System.out.println("Opção inválida!");
+                continue;
+            }
+            Animais animal = escolherAnimal(ctx);
+            if (animal == null) {
+                continue;
+            }
+            try {
+                switch (opcao) {
+                    case 1: registrarConsulta(ctx, animal); break;
+                    case 2: registrarTratamento(ctx, animal); break;
+                    case 3: atualizarSaude(animal); break;
+                    case 4: gerenciarVacinas(ctx, animal); break;
+                    case 5: gerenciarMedicamentos(ctx, animal); break;
+                    default: System.out.println(ctx.controleSaude.gerarRelatorio(animal));
                 }
-                for (int i = 0; i < cadastrados.size(); i++) {
-                        System.out.println((i + 1) + " - " + cadastrados.get(i).getNome());
-                }
-                    System.out.print("Escolha o animal: ");
-                    int opcao1 = scan.nextInt();
-                    scan.nextLine();
-                    if (opcao1 < 1 || opcao1 > cadastrados.size()) {
-                    System.out.println("Opção inválida!");
-                    break;;
-                    }
-                    Animal animall = cadastrados.get(opcao1 - 1);
-                    boolean rodando2 = true;
-                    while (rodando2) {
-                        System.out.println("\n     ATUALIZAR INFORMAÇÕES MÉDICAS      ");
-                        System.out.println("1 - Atualizar estado de saúde");
-                        System.out.println("2 - Atualizar vacina");
-                        System.out.println("3 - Atualizar medicamento");
-                        System.out.println("0 - Voltar");
-                        System.out.print("Escolha uma opção: ");
-                        int opcao = scan.nextInt();
-                        scan.nextLine();
-                        switch (opcao) {
-                            case 1:
-                                String saude = Selecao.selecionarSaude(); 
-                                animall.setEstadoSaude(saude);
-                                rodando2 = false;
-                                break;
-                            case 2:
-                                boolean rodandoo = true;
-                                while(rodandoo){
-                                System.out.println("\n      GERENCIAR VACINAS         ");
-                                System.out.println("1 - Adicionar vacina");
-                                System.out.println("2 - Remover vacina");
-                                System.out.println("0 - Voltar");
-                                System.out.print("Escolha: ");
-                                int opcao3   = scan.nextInt();
-                                scan.nextLine();
-                                switch (opcao3) {
-                                    case 1:
-                                        System.out.println("Digite o nome da vacina:");
-                                        String nomeVacina = scan.nextLine();
-                                        Validacao.validarNome(nomeVacina);
-                                        Vacina vacina = new Vacina(nomeVacina);
-                                        controleSaude.registrarVacina(animall, vacina);
-                                        System.out.println("Vacina registrada com sucesso");
-                                        rodandoo = false;
-                                        break;
-                                    case 2:
-                                        ArrayList<Vacina> vacinas = animall.getHistoricoMedico().getVacinas();
-                                        if (vacinas.isEmpty()) {
-                                            System.out.println("Não existem vacinas!");
-                                            break;
-                                        }
-                                        for (int i = 0; i < vacinas.size(); i++) {
-                                            System.out.println((i + 1) + " - " +
-                                            vacinas.get(i).gerarRelatorio());
-                                        }
-                                        System.out.print("Escolha a vacina que deseja remover: ");
-                                        int indice = scan.nextInt() - 1;
-                                        scan.nextLine();
-                                        controleSaude.removerVacina(animall, indice);
-                                        System.out.println("Vacina removida com sucesso!");
-                                        rodandoo = false;
-                                        break;
-                                     case 0:
-                                        rodandoo = false;
-                                        break;
-                                    default:
-                                        System.out.println("Digite um número válido");
-                                        break;
-                                    break;
-                                }
-                            }
-                            case 3:
-                                boolean rodandoo1 = true;
-                                while(rodandoo1){
-                                System.out.println("\n      GERENCIAR MEDICAMENTOS         ");
-                                System.out.println("1 - Adicionar medicamento");
-                                System.out.println("2 - Remover medicamento");
-                                System.out.println("0 - Voltar");
-                                System.out.print("Escolha: ");
-                                int opcao4   = scan.nextInt();
-                                scan.nextLine();
-                                switch (opcao4) {
-                                    case 1:
-                                       System.out.println("Digite o nome do medicamento:");
-                                        String nomeMedicamento = scan.nextLine();
-                                       Validacao.validarNome(nomeMedicamento);
-                                       Medicamento medicamento = new Medicamento(nomeMedicamento);
-                                       controleSaude.registrarMedicamento(nomeMedicamento);
-                                        System.out.println("Medicamento registrado cosucesso");
-                                        rodandoo1 = false;
-                                        break;
-                                     case 2:
-                                        ArrayList<Medicamento> medicamentos = animall.getHistoricoMedico().getMedicamentos();
-                                        if (medicamentos.isEmpty()) {
-                                            System.out.println("Não existem consultacadastradas!");
-                                                    break;
-                                                }
-                                                for (int i = 0; i < medicamentos.size(); i++) {
-                                                    System.out.println((i + 1) + " - " +
-                                                    medicamentos.get(i).gerarRelatorio());
-                                                }
-                                                System.out.print("Escolha a vacina que deseja remover: ");
-                                                int indice = scan.nextInt() - 1;
-                                                scan.nextLine();
-                                                controleSaude.removerMedicamento(animall, indice);
-                                                System.out.println("Medicamento removida com sucesso!");
-                                                rodandoo1 = false;
-                                                break;
-                                            case 0:
-                                                rodandoo1 = false;
-                                                break;
-                                            default:
-                                                break;
-                                            }
-                                        } 
-                        }               
-                        case 3:
-                             if (cadastrados.isEmpty()) {
-                                System.out.println("Não existem animais cadastrados!");
-                                break;
-                            }
-                            for (int i = 0; i < cadastrados.size(); i++) {
-                                System.out.println((i + 1) + " - " + cadastrados.get(i).getNome());
-                            }
-                            System.out.print("Escolha o animal: ");
-                            int opcao6 = scan.nextInt();
-                            scan.nextLine();
-                            if (opcao6 < 1 || opcao6 > cadastrados.size()) {
-                            System.out.println("Opção inválida!");
-                            break;
-                            }
-                            Animais animalll = cadastrados.get(opcao6 - 1);
-                            if (animalll != null) {
-                                String relatorio = controleSaude.gerarRelatorio(animalll);
-                                System.out.println(relatorio);
-                            }
-                            rodando = false;
-                            break;
-                        default:
-                            System.out.println("Opção Inválida!!");
-                            break;
-                    }
-        }}}
+            } catch (ConsultaDuplicadaException | VacinaDuplicadaException | MedicamentoDuplicadoException | TratamentoDuplicadoException | NomeInvalidoException | AtividadeException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+    }
+
+    private Animais escolherAnimal(Contexto ctx) {
+        ArrayList<Animais> todos = new ArrayList<>(ctx.cadastrados);
+        todos.addAll(ctx.adotados);
+        if (todos.isEmpty()) {
+            System.out.println("Não existem animais cadastrados!");
+            return null;
+        }
+        for (int i = 0; i < todos.size(); i++) {
+            System.out.println((i + 1) + " - " + todos.get(i).getNome() + " (" + todos.get(i).getEspecie() + ")");
+        }
+        System.out.print("Escolha o animal: ");
+        int n = Entrada.lerInt();
+        if (n < 1 || n > todos.size()) {
+            System.out.println("Opção inválida!");
+            return null;
+        }
+        return todos.get(n - 1);
+    }
+
+    private void registrarConsulta(Contexto ctx, Animais animal) throws NomeInvalidoException, AtividadeException, ConsultaDuplicadaException {
+        System.out.print("Descrição da consulta: ");
+        String descricao = Entrada.lerLinha();
+        Validacao.validarDescricao(descricao);
+        LocalDate data = TelaPrincipal.lerData("Data da consulta");
+        Validacao.validarDataResgate(data);
+        ctx.controleSaude.registrarConsulta(animal, new Consulta(data, descricao));
+        System.out.println("Consulta registrada com sucesso!");
+    }
+
+    private void registrarTratamento(Contexto ctx, Animais animal) throws NomeInvalidoException, TratamentoDuplicadoException {
+        System.out.print("Descrição do tratamento: ");
+        String descricao = Entrada.lerLinha();
+        Validacao.validarDescricao(descricao);
+        ctx.controleSaude.registrarTratamento(animal, new Tratamento(descricao));
+        System.out.println("Tratamento registrado com sucesso!");
+    }
+
+    private void atualizarSaude(Animais animal) {
+        animal.setEstadoSaude(Selecao.selecionarSaude());
+        System.out.println("Estado de saúde atualizado para: " + animal.getEstadoSaude());
+        if (animal.getEstadoSaude().equalsIgnoreCase(Animais.CRITICO)) {
+            System.out.println("Atenção: animal em estado crítico não pode ser adotado.");
+        }
+    }
+
+    private void gerenciarVacinas(Contexto ctx, Animais animal) throws NomeInvalidoException, VacinaDuplicadaException {
+        System.out.println("1 - Adicionar vacina");
+        System.out.println("2 - Remover vacina");
+        System.out.print("Escolha: ");
+        int opcao = Entrada.lerInt();
+        if (opcao == 1) {
+            System.out.print("Nome da vacina: ");
+            String nome = Entrada.lerLinha();
+            Validacao.validarDescricao(nome);
+            ctx.controleSaude.registrarVacina(animal, new Vacina(nome));
+            System.out.println("Vacina registrada com sucesso!");
+        } else if (opcao == 2) {
+            ArrayList<Vacina> vacinas = animal.getHistoricoMedico().getVacinas();
+            if (vacinas.isEmpty()) {
+                System.out.println("Não existem vacinas registradas!");
+                return;
+            }
+            for (int i = 0; i < vacinas.size(); i++) {
+                System.out.println((i + 1) + " - " + vacinas.get(i).gerarRelatorio());
+            }
+            System.out.print("Escolha a vacina que deseja remover: ");
+            removerSeguro(() -> ctx.controleSaude.removerVacina(animal, Entrada.lerInt() - 1), "Vacina removida com sucesso!");
+        } else {
+            System.out.println("Opção inválida!");
+        }
+    }
+
+    private void gerenciarMedicamentos(Contexto ctx, Animais animal) throws NomeInvalidoException, MedicamentoDuplicadoException {
+        System.out.println("1 - Adicionar medicamento");
+        System.out.println("2 - Remover medicamento");
+        System.out.print("Escolha: ");
+        int opcao = Entrada.lerInt();
+        if (opcao == 1) {
+            System.out.print("Nome do medicamento: ");
+            String nome = Entrada.lerLinha();
+            Validacao.validarDescricao(nome);
+            ctx.controleSaude.registrarMedicamento(animal, new Medicamento(nome));
+            System.out.println("Medicamento registrado com sucesso!");
+        } else if (opcao == 2) {
+            ArrayList<Medicamento> medicamentos = animal.getHistoricoMedico().getMedicamentos();
+            if (medicamentos.isEmpty()) {
+                System.out.println("Não existem medicamentos registrados!");
+                return;
+            }
+            for (int i = 0; i < medicamentos.size(); i++) {
+                System.out.println((i + 1) + " - " + medicamentos.get(i).gerarRelatorio());
+            }
+            System.out.print("Escolha o medicamento que deseja remover: ");
+            removerSeguro(() -> ctx.controleSaude.removerMedicamento(animal, Entrada.lerInt() - 1), "Medicamento removido com sucesso!");
+        } else {
+            System.out.println("Opção inválida!");
+        }
+    }
+
+    private void removerSeguro(Runnable acao, String sucesso) {
+        try {
+            acao.run();
+            System.out.println(sucesso);
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
     @Override
     public String getTipoUsuario() {
-        return "Veterinario";
+        return "Veterinário";
     }
-    public String getNome() {
-        return nome;
-    }
-    
 }
