@@ -1,65 +1,88 @@
-package UsuarioService;
+package service;
 
-import exceptions.EmailInvalidoException;
-import exceptions.NomeInvalidoException;
-import exceptions.SenhaInvalidaException;
-import java.util.ArrayList;
-import java.util.Lista;
-import java.util.scanner;
+import exceptions.*;
 import modelo.*;
-import service.Validacao;
+import ui.Entrada;
 
 public class UsuarioService {
-    List<Usuario> usuarios = new ArrayList<>();
-    public UsuarioService() {}
-    public static void cadastro(List<Usuario> usuarios) throws EmailInvalidoException, NomeInvalidoException, SenhaInvalidaException{
-        Scanner scanner = new Scanner(System.in);
-        boolean rodando = true;
-        while (rodando) {
+
+    private interface Validador{
+        void validar(String texto) throws Exception;
+    }
+
+    private UsuarioService(){
+    }
+
+    private static String ler(String pergunta, Validador validador){
+        while (true) {
+            System.out.print(pergunta);
+            String texto = Entrada.lerLinha();
             try {
-                System.out.println("Digite seu email:");
-                String email = scanner.nextLine();
-                Validacao.validarEmail(email);
-                for(Usuario u : usuarios) {
-                    if(u.getEmail().equalsIgnoreCase(email) && u.getSenha().equals(senha)) {
-                    System.out.println("Login realizado com sucesso");
-                    return;
-                }
-                }
-                System.out.println("Digite seu nome:");
-                String nome = scanner.nextLine();
-                Validacao.validarNome(nome);
-                System.out.println("Digite a Senha:");
-                String senha = scanner.nextLine();
-                Validacao.validarSenha(senha);
-                Veterinario novoVeterinario = new Veterinario(email, nome, senha);
-                usuarios.add(novoVeterinario);
-                System.out.println("Cadastro realizado com sucesso");
-                rodando = false;
-                return;
-            } catch (EmailInvalidoException e) {
-                System.out.println(e.getMessage());
-            } catch (NomeInvalidoException e) {
-                System.out.println(e.getMessage());
-            } catch (SenhaInvalidaException e) {
+                validador.validar(texto);
+                return texto;
+            } catch (Exception e){
                 System.out.println(e.getMessage());
             }
         }
     }
-    public static Usuario Login(List<Usuario> usuarios,Usuario usuario) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("    Login     ");
+
+    public static Usuario cadastrar(Contexto ctx){
+        System.out.println("\n      CADASTRO      ");
+        System.out.println("1 - Voluntário");
+        System.out.println("2 - Veterinário");
+        System.out.println("0 - Voltar");
+        System.out.print("Escolha: ");
+        int tipo = Entrada.lerInt();
+        if (tipo != 1 && tipo != 2){
+            if (tipo != 0){
+                System.out.println("Opção inválida!");
+            }
+            return null;
+        }
+
+        String email = ler("Digite seu email: ", texto -> {
+            Validacao.validarEmail(texto);
+            for (Usuario u : ctx.usuarios) {
+                if (u.getEmail().equalsIgnoreCase(texto.trim())){
+                    throw new UsuarioDuplicadoException("Erro! Já existe um usuário com este e-mail!");
+                }
+            }
+        });
+        String nome = ler("Digite seu nome: ", Validacao::validarNome);
+        String senha = ler("Digite a senha (mínimo 8 caracteres): ", Validacao::validarSenha);
+
+        try {
+            if (tipo == 1){
+                Voluntario v = new Voluntario(email, nome, senha);
+                ctx.voluntarios.add(v);
+                ctx.usuarios.add(v);
+                System.out.println("Cadastro de voluntário realizado com sucesso!");
+                return v;
+            }
+            Veterinario v = new Veterinario(email, nome, senha);
+            ctx.veterinarios.add(v);
+            ctx.usuarios.add(v);
+            System.out.println("Cadastro de veterinário realizado com sucesso!");
+            return v;
+        } catch (EmailInvalidoException | NomeInvalidoException | SenhaInvalidaException e){
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
+    public static Usuario login(Contexto ctx){
+        System.out.println("\n      LOGIN      ");
         System.out.print("Email: ");
-        String email = scanner.nextLine();
-        System.out.print("Digite sua senha: ");
-        String senha = scanner.nextLine();
-        for(Usuario u : usuarios) {
-            if(u.getEmail().equalsIgnoreCase(email) && u.getSenha().equals(senha)) {
-                System.out.println("Login realizado com sucesso");
+        String email = Entrada.lerLinha();
+        System.out.print("Senha: ");
+        String senha = Entrada.lerLinha();
+        for (Usuario u : ctx.usuarios) {
+            if (u.getEmail().equalsIgnoreCase(email) && u.autenticar(senha)){
+                System.out.println("Login realizado com sucesso! Bem-vindo(a), " + u.getNome() + ".");
                 return u;
             }
         }
-        System.out.println("Nenhum usuário encontrado, Email ou senha incorretos");
+        System.out.println("Email ou senha incorretos.");
         return null;
     }
 }
