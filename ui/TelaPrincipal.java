@@ -1,109 +1,108 @@
 package ui;
+
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.InputMismatchException;
 import java.util.List;
-import java.util.Scanner;
-import enums.*;
+import enums.TipoAtividade;
 import exceptions.AtividadeException;
-import exceptions.EmailInvalidoException;
-import exceptions.NomeInvalidoException;
 import modelo.Atividade;
+import modelo.Notificacao;
 import modelo.Voluntario;
-import service.*;
+import service.AtividadeService;
+import service.Contexto;
+
 public class TelaPrincipal {
-    DateTimeFormatter formatador = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-    public static void telaCriarAtividade(AtividadeService atividadeservice) {
-        Scanner scanner = new Scanner(System.in);
-        try {
-            System.out.println("Número de vagas :");
-            int vagas = scanner.nextInt();
-            LocalDate data = lerData();
-            TipoAtividade tipo = Selecao.selecionarAtividade();
-            atividadeservice.criarAtividade(vagas, data, tipo);
-            System.out.println("Atividade criada com sucesso!!");
-            } catch (InputMismatchException e) {
-                System.out.println("Erro: O número de vagas deve ser um valor inteiro válido!");
-            }catch (AtividadeException e) {
-                System.out.println("Erro ao criar atividade: " + e.getMessage());
-            }
-            scanner.close();
+    public static final DateTimeFormatter FORMATO_DATA = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+    private TelaPrincipal() {
     }
-    public static LocalDate lerData() {
-        Scanner scanner = new Scanner(System.in);
-        DateTimeFormatter formatador = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-         while (true) {
-                System.out.println("Digite a data do evento dd/mm/yyyy");
-                String entrada = scanner.nextLine().trim();
-                try {
-                    scanner.close();
-                    return LocalDate.parse(entrada, formatador);
-                } catch(DateTimeParseException e) {
-                    System.out.println("Data Inválida! Insira no formato dd/mm/yyyy!");
-                }
+
+    public static LocalDate lerData(String mensagem) {
+        while (true) {
+            System.out.print(mensagem + " (dd/mm/aaaa): ");
+            String entrada = Entrada.lerLinha();
+            try {
+                return LocalDate.parse(entrada, FORMATO_DATA);
+            } catch (DateTimeParseException e) {
+                System.out.println("Data inválida! Use o formato dd/mm/aaaa.");
+            }
         }
     }
-    public static List<Atividade> atividadesDisponiveis(AtividadeService atividadesService) {
-        DateTimeFormatter formatador = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        List<Atividade> abertas = atividadesService.atividadesAbertas();
-        if(abertas.isEmpty()) {
-            System.out.println("Não há atividades abertas no momento");
+
+    public static void telaCriarAtividade(Contexto ctx){
+        System.out.println("\n      CADASTRAR ATIVIDADE      ");
+        try {
+            System.out.print("Número de vagas: ");
+            int vagas = Entrada.lerInt();
+            LocalDate data = lerData("Data da atividade");
+            TipoAtividade tipo = Selecao.selecionarAtividade();
+            Atividade a = ctx.atividadeService.criarAtividade(vagas, data, tipo);
+            ctx.notificacoes.add(new Notificacao("Nova atividade: " + a.getTipo().getDescricao()+ " em " + a.getData().format(FORMATO_DATA)));
+            System.out.println("Atividade criada com sucesso!");
+        } catch (AtividadeException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public static List<Atividade> atividadesDisponiveis(AtividadeService servico){
+        List<Atividade> abertas = servico.atividadesAbertas();
+        if (abertas.isEmpty()){
+            System.out.println("Não há atividades abertas no momento.");
             return abertas;
         }
-        System.out.println("Atividades Abertas");
-        for(int i  = 0; i < abertas.size();i++) {
+        System.out.println("Atividades abertas:");
+        for (int i = 0; i < abertas.size(); i++){
             Atividade a = abertas.get(i);
-            System.out.println((i + 1) + " - " + a.getTipo().getDescricao()+ " | Data: " + a.getData().format(formatador)+ " | Vagas restantes: " + a.getVagasRestantes());
+            System.out.println((i + 1) + " - " + a.getTipo().getDescricao()+ " | Data: " + a.getData().format(FORMATO_DATA)+ " | Vagas restantes: " + a.getVagasRestantes());
         }
         return abertas;
     }
 
-    public static void telaInscricao(AtividadeService atividadeService, Voluntario voluntario) {
-        Scanner scanner = new Scanner(System.in);
-        List<Atividade> abertas = atividadesDisponiveis(atividadeService);
-        if(abertas.isEmpty()) {
-            scanner.close();
+    public static void telaInscricao(AtividadeService servico, Voluntario voluntario){
+        List<Atividade> abertas = atividadesDisponiveis(servico);
+        if (abertas.isEmpty()){
             return;
         }
         System.out.println("0 - Voltar");
-        System.out.println("Selecione a atividade desejada:");
+        System.out.print("Selecione a atividade desejada: ");
+        int escolha = Entrada.lerInt();
+        if (escolha == 0){
+            return;
+        }
+        if (escolha < 1 || escolha > abertas.size()){
+            System.out.println("Opção inválida!");
+            return;
+        }
         try {
-            int resposta = scanner.nextInt();
-            if(resposta == 0) {
-                scanner.close();
-                return;
-            }
-            if(resposta < 1 || resposta > abertas.size()) {
-                System.out.println("Opção Inválida");
-            }
-            Atividade escolhida = abertas.get(resposta - 1);
-            atividadeService.inscrever(escolhida, voluntario);
+            servico.inscrever(abertas.get(escolha - 1), voluntario);
             System.out.println("Inscrição realizada com sucesso!");
-        } catch(InputMismatchException e) {
-            System.out.println("Erro! Digite apenas um número");
-        } catch(AtividadeException e) {
-
-        }
-        scanner.close();
-    }
-    public static List<Atividade> atividadesIndisponiveis(AtividadeService atividadeService) {
-        DateTimeFormatter formatador = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        List<Atividade> fechadas = AtividadesService.atividadesRealizadas();
-        if(fechadas.isEmpty()) {
-            System.out.prinln("Nenhuma Atividade foi concluída ainda");
-            return fechadas;
-        }
-        System.out.println("Atividades Realizadas:");
-        for(int i  = 0; i < fechadas.size();i++) {
-            Atividade a = fechadas.get(i);
-            System.out.println((i + 1) + " - " + a.getTipo().getDescricao()+ " | Data: " + a.getData().format(formatador));
-        }
-    }
-    public static void telaMenu(List<Usuario> usuarios) throws EmailInvalidoException, NomeInvalidoException, SenhaInvalidaException {
-
+        } catch (AtividadeException e) {
+            System.out.println(e.getMessage());
         }
     }
 
+    public static void telaHistorico(Voluntario voluntario){
+        List<Atividade> participacoes = voluntario.getParticipacoes();
+        if (participacoes.isEmpty()){
+            System.out.println("Você ainda não participou de nenhuma atividade.");
+            return;
+        }
+        System.out.println("Seu histórico de participações:");
+        for (Atividade a : participacoes){
+            System.out.println("- " + a.getTipo().getDescricao() + " | " + a.getData().format(FORMATO_DATA));
+        }
+    }
+
+    public static void atividadesRealizadas(AtividadeService servico){
+        List<Atividade> realizadas = servico.atividadesRealizadas();
+        if (realizadas.isEmpty()){
+            System.out.println("Nenhuma atividade foi concluída ainda.");
+            return;
+        }
+        System.out.println("Atividades realizadas:");
+        for (Atividade a : realizadas){
+            System.out.println("- " + a.getTipo().getDescricao() + " | " + a.getData().format(FORMATO_DATA)+ " | Participantes: " + a.getVoluntarios().size());
+        }
+    }
+}
