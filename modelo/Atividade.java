@@ -11,12 +11,12 @@ public class Atividade {
     private int vagas;
     private LocalDate data;
     private TipoAtividade tipo;
-    public Atividade (int vagas, LocalDate data, TipoAtividade tipo) throws AtividadeException {
+    public Atividade (int vagas, LocalDate data, TipoAtividade tipo) throws AtividadeException{
         Validacao.validarVagas(vagas);
         Validacao.validarDataAtividade(data);
+        setTipo(tipo);
         this.vagas = vagas;
         this.data = data;
-        this.tipo = tipo;
     }
     private List<Voluntario> voluntarios = new ArrayList<>();
     public int getVagas(){
@@ -36,36 +36,34 @@ public class Atividade {
         Validacao.validarDataAtividade(data);
         this.data = data;
     }
-    public void setTipo (TipoAtividade tipo) {
+    public void setTipo (TipoAtividade tipo) throws AtividadeException {
+        if (tipo == null){
+            throw new AtividadeException("Erro! Escolha o tipo da atividade!");
+        }
         this.tipo = tipo;
     }
-    public int getVagasRestantes() {
+    public int getVagasRestantes(){
         return vagas - voluntarios.size();
     }
-    public List<Voluntario> getVoluntarios() {
+    public List<Voluntario> getVoluntarios(){
         return new ArrayList<>(voluntarios);
     }
-    public void inscreverVoluntario(Voluntario voluntario) throws AtividadeException {
-        try{
-        if(voluntario == null) {
+
+    public void inscreverVoluntario(Voluntario voluntario) throws AtividadeException{
+        if (voluntario == null) {
             throw new AtividadeException("Erro! Voluntário inválido!");
         }
-        if(data.isBefore(LocalDate.now())) {
+        if (data.isBefore(LocalDate.now())){
             throw new AtividadeException("Erro! Não é possível se inscrever em uma atividade que já ocorreu!");
         }
-        int vagasPreenchidas = 0;
-        for(Voluntario v : voluntarios) {
-            if(v.getEmail().equalsIgnoreCase(voluntario.getEmail())) {
+        for (Voluntario v : voluntarios){
+            if (v.getEmail().equalsIgnoreCase(voluntario.getEmail())){
                 throw new AtividadeException("Erro! Não é possível se inscrever duas vezes na mesma atividade!");
             }
-            vagasPreenchidas++;
         }
-        if (vagasPreenchidas >= vagas) {
+        if (getVagasRestantes() <= 0){
             throw new AtividadeException("Erro! Não há vagas disponíveis para esta atividade!");
         }
         voluntarios.add(voluntario);
-    } catch(AtividadeException e) {
-        system.out.println(e.getMessage());
     }
-    } 
 }

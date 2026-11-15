@@ -1,13 +1,14 @@
 package modelo;
 
-public class Consulta extends RegistroMedico { 
-    private LocalDate data;
-    public Consulta(LocalDate data, String descricao) {
-        super(descricao);
-        this.data = data;
+import java.time.LocalDate;
+
+public class Consulta extends RegistroMedico {
+    public Consulta(LocalDate data, String descricao){
+        super(descricao, data);
     }
+
     @Override
-    public String gerarRelatorio() {
-        return "Consulta: " + getDescricao() + "\nData: " + data;
+    public String gerarRelatorio(){
+    return "Consulta: " + getDescricao() + " | Data: " + getData();
     }
 }

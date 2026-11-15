@@ -11,8 +11,7 @@ public abstract class Usuario {
     private String email;
     private String senha;
 
-    public Usuario(String email, String nome, String senha)
-            throws EmailInvalidoException, NomeInvalidoException, SenhaInvalidaException {
+    public Usuario(String email, String nome, String senha)throws EmailInvalidoException, NomeInvalidoException, SenhaInvalidaException{
         setEmail(email);
         setNome(nome);
         setSenha(senha);
@@ -33,15 +32,15 @@ public abstract class Usuario {
         this.senha = senha;
     }
 
-    public String getEmail() { 
-        return email; 
+    public String getEmail(){ 
+    return email; 
     }
-    public String getNome() { 
-        return nome; 
+    public String getNome(){ 
+    return nome; 
     }
 
-    public boolean autenticar(String tentativa) {
-        return senha.equals(tentativa);
+    public boolean autenticar(String tentativa){
+    return senha.equals(tentativa);
     }
 
     public abstract void Menu(Contexto ctx);

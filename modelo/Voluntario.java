@@ -11,12 +11,12 @@ public class Voluntario extends Usuario {
     private final List<Animais> animaisResponsaveis = new ArrayList<>();
     private final List<Atividade> participacao = new ArrayList<>();
 
-    public Voluntario(String email, String nome, String senha) throws EmailInvalidoException, NomeInvalidoException, SenhaInvalidaException {
+    public Voluntario(String email, String nome, String senha) throws EmailInvalidoException, NomeInvalidoException, SenhaInvalidaException{
         super(email, nome, senha);
     }
 
     @Override
-    public void Menu(Contexto ctx) {
+    public void Menu(Contexto ctx){
         boolean rodando = true;
         while (rodando) {
             System.out.println("\n      MENU DO VOLUNTÁRIO      ");
@@ -29,7 +29,7 @@ public class Voluntario extends Usuario {
             System.out.println("7 - Notificações");
             System.out.println("0 - Sair");
             System.out.print("Selecione a opção desejada: ");
-            switch (Entrada.lerInt()) {
+            switch (Entrada.lerInt()){
                 case 1:
                     listarDisponiveis(ctx);
                     break;
@@ -37,10 +37,10 @@ public class Voluntario extends Usuario {
                     TelaPrincipal.telaInscricao(ctx.atividadeService, this);
                     break;
                 case 3:
-                    if (animaisResponsaveis.isEmpty()) {
+                    if (animaisResponsaveis.isEmpty()){
                         System.out.println("Você não tem animais sob sua responsabilidade.");
                     }
-                    for (Animais a : animaisResponsaveis) {
+                    for (Animais a : animaisResponsaveis){
                         System.out.println(a);
                     }
                     break;
@@ -54,10 +54,10 @@ public class Voluntario extends Usuario {
                     Animais.filtroAnimais(ctx.cadastrados);
                     break;
                 case 7:
-                    if (ctx.notificacoes.isEmpty()) {
+                    if (ctx.notificacoes.isEmpty()){
                         System.out.println("Nenhuma notificação.");
                     }
-                    for (Notificacao n : ctx.notificacoes) {
+                    for (Notificacao n : ctx.notificacoes){
                         System.out.println(n);
                     }
                     break;
@@ -70,10 +70,10 @@ public class Voluntario extends Usuario {
         }
     }
 
-    private void listarDisponiveis(Contexto ctx) {
+    private void listarDisponiveis(Contexto ctx){
         System.out.println("\n      ANIMAIS DISPONÍVEIS      ");
         boolean achou = false;
-        for (Animais a : ctx.cadastrados) {
+        for (Animais a : ctx.cadastrados){
             if (a.podeSerAdotado()) {
                 System.out.println(a);
                 achou = true;
@@ -84,7 +84,7 @@ public class Voluntario extends Usuario {
         }
     }
 
-    private void solicitarAdocao(Contexto ctx) {
+    private void solicitarAdocao(Contexto ctx){
         System.out.println("\n      SOLICITAR ADOÇÃO      ");
         System.out.print("Digite o ID do animal: ");
         int id = Entrada.lerInt();
@@ -95,18 +95,18 @@ public class Voluntario extends Usuario {
                 break;
             }
         }
-        if (encontrado == null) {
+        if (encontrado == null){
             System.out.println("Animal não encontrado!");
             return;
         }
         try {
-            if (!encontrado.getStatus().equalsIgnoreCase(Animais.DISPONIVEL)) {
+            if (!encontrado.getStatus().equalsIgnoreCase(Animais.DISPONIVEL)){
                 throw new AnimalIndisponivelException("Erro! Este animal não está disponível para adoção!");
             }
-            if (encontrado.getEstadoSaude().equalsIgnoreCase(Animais.CRITICO)) {
+            if (encontrado.getEstadoSaude().equalsIgnoreCase(Animais.CRITICO)){
                 throw new AnimalIndisponivelException("Erro! Animal em estado crítico não pode ser adotado!");
             }
-            for (SolicitacaoAdocao s : ctx.solicitacoes) {
+            for (SolicitacaoAdocao s : ctx.solicitacoes){
                 if (s.getAnimal().getId() == id && s.getVoluntario() == this
                         && s.getStatus().equalsIgnoreCase("PENDENTE")) {
                     throw new AnimalIndisponivelException("Erro! Você já tem uma solicitação pendente para este animal!");
@@ -120,27 +120,27 @@ public class Voluntario extends Usuario {
         }
     }
 
-    public void assumirResponsabilidade(Animais animal) {
-        animaisResponsaveis.add(animal);
+    public void assumirResponsabilidade(Animais animal){
+    animaisResponsaveis.add(animal);
     }
 
-    public void liberarResponsabilidade(Animais animal) {
-        animaisResponsaveis.remove(animal);
+    public void liberarResponsabilidade(Animais animal){
+    animaisResponsaveis.remove(animal);
     }
     
-    public void registrarParticipacao(Atividade atividade) throws AtividadeException {
-        if (atividade == null) {
+    public void registrarParticipacao(Atividade atividade) throws AtividadeException{
+        if (atividade == null){
             throw new AtividadeException("Erro! Atividade inválida!");
         }
         participacao.add(atividade);
     }
 
-    public List<Atividade> getParticipacoes() {
-        return new ArrayList<>(participacao);
+    public List<Atividade> getParticipacoes(){
+    return new ArrayList<>(participacao);
     }
 
     @Override
-    public String getTipoUsuario() {
-        return "Voluntário";
+    public String getTipoUsuario(){
+    return "Voluntário";
     }
 }

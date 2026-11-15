@@ -2,7 +2,7 @@ package modelo;
 
 
 
-public class SolicitacaoAdocao {
+public class SolicitacaoAdocao{
 
 private static int contador = 1;
 
@@ -11,7 +11,7 @@ private static int contador = 1;
     private Animais animal;
     private String status;
 
-    public SolicitacaoAdocao(Voluntario voluntario, Animais animal) {
+    public SolicitacaoAdocao(Voluntario voluntario, Animais animal){
 
         this.id = contador++;
         this.voluntario = voluntario;
@@ -20,23 +20,23 @@ private static int contador = 1;
 
     }
 
-    public int getId() {
+    public int getId(){
         return id;
     }
 
-    public Voluntario getVoluntario() {
+    public Voluntario getVoluntario(){
         return voluntario;
     }
 
-    public Animais getAnimal() {
+    public Animais getAnimal(){
         return animal;
     }
 
-    public String getStatus() {
+    public String getStatus(){
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(String status){
         this.status = status;
     }
 
