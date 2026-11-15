@@ -1,6 +1,6 @@
 package enums;
 
-public enum TipoAtividade {
+public enum TipoAtividade{
     MUTIRAO_LIMPEZA("Mutirão de limpeza"),
     CAMPANHA_VACINACAO("Campanhas de vacinação"),
     FEIRA_ADOCAO("Feiras de adoção"),
@@ -8,14 +8,15 @@ public enum TipoAtividade {
 
     private final String descricao;
 
-    TipoAtividade(String descricao) {
+    TipoAtividade(String descricao){
         this.descricao = descricao;
     }
 
-    public String getDescricao() {
+    public String getDescricao(){
         return descricao;
     }
-    public String tString() {
+    @Override
+    public String toString(){
         return descricao;
     }
     
