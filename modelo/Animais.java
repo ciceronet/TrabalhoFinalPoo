@@ -243,6 +243,12 @@ public class Animais {
         }
     }
 
+    private static String semAcento(String texto){
+        if (texto == null) return "";
+        String n = java.text.Normalizer.normalize(texto, java.text.Normalizer.Form.NFD);
+        return n.replaceAll("\\p{M}", "").toLowerCase().trim();
+    }
+
     private static void filtrar(ArrayList<Animais> lista, java.util.function.Predicate<Animais> condicao){
         boolean achou = false;
         for (Animais a : lista){
@@ -270,27 +276,36 @@ public class Animais {
             System.out.println("0 - Voltar");
             System.out.print("Escolha: ");
             resposta = Entrada.lerInt();
-            if (resposta >= 1 && resposta <= 7 && resposta != 4){
+            if (resposta == 6){
+                System.out.println("1 - " + DISPONIVEL);
+                System.out.println("2 - " + ADOTADO);
+                System.out.print("Escolha o status: ");
+                int op = Entrada.lerInt();
+                if (op == 1) {
+                    filtrar(animais, a -> a.getStatus().equals(DISPONIVEL));
+                } else if (op == 2) {
+                    filtrar(animais, a -> a.getStatus().equals(ADOTADO));
+                } else {
+                    System.out.println("Opção inválida!");
+                }
+            } else if (resposta >= 1 && resposta <= 7 && resposta != 4){
                 System.out.print("Digite o termo da busca: ");
-                String termo = Entrada.lerLinha().toLowerCase();
+                String termo = semAcento(Entrada.lerLinha());
                 switch (resposta) {
-                    case 1: 
-                    filtrar(animais, a -> a.getNome().toLowerCase().contains(termo));
+                    case 1:
+                        filtrar(animais, a -> semAcento(a.getNome()).contains(termo));
                         break;
-                    case 2: 
-                    filtrar(animais, a -> a.getEspecie().equalsIgnoreCase(termo)); 
+                    case 2:
+                        filtrar(animais, a -> semAcento(a.getEspecie()).contains(termo));
                         break;
-                    case 3: 
-                    filtrar(animais, a -> a.getRaca().toLowerCase().contains(termo));
+                    case 3:
+                        filtrar(animais, a -> semAcento(a.getRaca()).contains(termo));
                         break;
-                    case 5: 
-                    filtrar(animais, a -> a.getPorte().equalsIgnoreCase(termo)); 
+                    case 5:
+                        filtrar(animais, a -> semAcento(a.getPorte()).contains(termo));
                         break;
-                    case 6: 
-                    filtrar(animais, a -> a.getStatus().equalsIgnoreCase(termo)); 
-                        break;
-                    default: 
-                    filtrar(animais, a -> a.getEstadoSaude().equalsIgnoreCase(termo));
+                    default:
+                        filtrar(animais, a -> semAcento(a.getEstadoSaude()).contains(termo));
                         break;
                 }
             } else if (resposta == 4){

@@ -30,14 +30,19 @@ public class Admnistrador extends Usuario {
             System.out.print("Selecione a opção desejada: ");
             switch (Entrada.lerInt()) {
                 case 1:
+                    int antes = ctx.cadastrados.size();
                     Animais.cadastrarAnimal(ctx.cadastrados, ctx.sc);
-                    ctx.notificacoes.add(new Notificacao("Novo animal cadastrado: " + ctx.cadastrados.get(ctx.cadastrados.size() - 1).getNome()));
+                    if (ctx.cadastrados.size() > antes) {
+                        ctx.notificacoes.add(new Notificacao("Novo animal cadastrado: " + ctx.cadastrados.get(ctx.cadastrados.size() - 1).getNome()));
+                    }
                     break;
                 case 2:
                     Animais.gerenciarAnimal(ctx.cadastrados, ctx.sc);
                     break;
                 case 3:
-                    Animais.filtroAnimais(ctx.cadastrados);
+                    ArrayList<Animais> todos = new ArrayList<>(ctx.cadastrados);
+                    todos.addAll(ctx.adotados);
+                    Animais.filtroAnimais(todos);
                     break;
                 case 4:
                     menuAdocao(ctx);

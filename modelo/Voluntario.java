@@ -51,7 +51,9 @@ public class Voluntario extends Usuario {
                     solicitarAdocao(ctx);
                     break;
                 case 6:
-                    Animais.filtroAnimais(ctx.cadastrados);
+                    ArrayList<Animais> todos = new ArrayList<>(ctx.cadastrados);
+                    todos.addAll(ctx.adotados);
+                    Animais.filtroAnimais(todos);
                     break;
                 case 7:
                     if (ctx.notificacoes.isEmpty()){
