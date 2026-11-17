@@ -1,5 +1,7 @@
 package ui;
 
+import service.Validacao;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -35,6 +37,7 @@ public class TelaPrincipal {
         try {
             System.out.print("Número de vagas: ");
             int vagas = Entrada.lerInt();
+            Validacao.validarVagas(vagas);
             LocalDate data = lerData("Data da atividade");
             TipoAtividade tipo = Selecao.selecionarAtividade();
             Atividade a = ctx.atividadeService.criarAtividade(vagas, data, tipo);
